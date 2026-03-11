@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+
+# Datos del usuario (no compartir)
+pomodoro_data.csv
+pomodoro_config.json
+
+# Archivos de desarrollo/backup
+pomodoro_final_backup.py
+pomodoro_final_pre_rounded.py
+pomodoro_final_stable*.py
+pomodoro_bento.py
+pomodoro.py
+simple_timer.py
+pomodoro_stats.csv
+pomodoro_tasks.csv
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~

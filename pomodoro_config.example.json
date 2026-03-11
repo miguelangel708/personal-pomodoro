@@ -1,0 +1,8 @@
+# Ejemplo de configuración
+{
+  "pomodoro_minutes": 25,
+  "break_minutes": 5,
+  "daily_goal": 8,
+  "idle_threshold": 60,
+  "transparency": 0.9
+}
