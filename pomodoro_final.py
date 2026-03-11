@@ -58,18 +58,31 @@ class Pomodoro:
         except:
             pass
         
-        self.main_frame = tk.Frame(self.root, bg=self.bg_color)
-        self.main_frame.pack(fill=tk.BOTH, expand=True)
+        # Habilitar transparencia en la ventana para bordes redondeados
+        self.root.wm_attributes("-transparent", True)
+        self.root.config(bg="systemTransparent")
+        
+        # Canvas para dibujar el fondo con bordes redondeados
+        self.canvas = tk.Canvas(
+            self.root,
+            bg="systemTransparent",
+            highlightthickness=0
+        )
+        self.canvas.pack(fill=tk.BOTH, expand=True)
+        
+        # Frame principal sobre el canvas (transparente para mostrar el fondo redondeado)
+        self.main_frame = tk.Frame(self.canvas, bg="systemTransparent")
+        self.canvas_window = self.canvas.create_window(0, 0, window=self.main_frame)
         
         # Columna izquierda: tiempos
-        left_frame = tk.Frame(self.main_frame, bg=self.bg_color)
+        left_frame = tk.Frame(self.main_frame, bg="systemTransparent")
         left_frame.pack(side=tk.LEFT, padx=5, pady=5)
         
         self.label = tk.Label(
             left_frame,
             text="00:00 | P:0/8",
             font=("Menlo", 12),
-            bg=self.bg_color,
+            bg="systemTransparent",
             fg="#00ff00",
             padx=4,
             pady=4
@@ -80,7 +93,7 @@ class Pomodoro:
             left_frame,
             text="Descanso: 00:00",
             font=("Menlo", 10),
-            bg=self.bg_color,
+            bg="systemTransparent",
             fg="#ffaa00",
             padx=4,
             pady=2
@@ -92,7 +105,7 @@ class Pomodoro:
             left_frame,
             text="▼ Tareas",
             font=("Menlo", 9),
-            bg=self.bg_color,
+            bg="systemTransparent",
             fg="#888888",
             bd=0,
             command=self.toggle_tasks_panel,
@@ -101,7 +114,7 @@ class Pomodoro:
         self.tasks_toggle_btn.pack(pady=(5, 0))
         
         # Columna derecha: botones verticales
-        btn_container = tk.Frame(self.main_frame, bg=self.bg_color)
+        btn_container = tk.Frame(self.main_frame, bg="systemTransparent")
         btn_container.pack(side=tk.RIGHT, padx=5, pady=5)
         
         stats_btn = tk.Button(
@@ -178,8 +191,55 @@ class Pomodoro:
         self.load_stats()
         self.load_tasks()
         
+        # Dibujar fondo con bordes redondeados después de renderizar
+        self.root.after(100, self.draw_rounded_bg)
+        
         self.root.after(1000, self.tick)
         self.root.mainloop()
+    
+    def create_rounded_rectangle(self, canvas, x1, y1, x2, y2, radius=26, **kwargs):
+        """Crear rectángulo con bordes redondeados"""
+        points = [
+            x1+radius, y1,
+            x1+radius, y1,
+            x2-radius, y1,
+            x2-radius, y1,
+            x2, y1,
+            x2, y1+radius,
+            x2, y1+radius,
+            x2, y2-radius,
+            x2, y2-radius,
+            x2, y2,
+            x2-radius, y2,
+            x2-radius, y2,
+            x1+radius, y2,
+            x1+radius, y2,
+            x1, y2,
+            x1, y2-radius,
+            x1, y2-radius,
+            x1, y1+radius,
+            x1, y1+radius,
+            x1, y1
+        ]
+        return canvas.create_polygon(points, smooth=True, **kwargs)
+    
+    def draw_rounded_bg(self):
+        """Dibujar rectángulo redondeado como fondo"""
+        self.main_frame.update_idletasks()
+        width = self.main_frame.winfo_width() + 30
+        height = self.main_frame.winfo_height() + 30
+        
+        # Eliminar rectángulo anterior si existe
+        if hasattr(self, 'rounded_rect_id'):
+            self.canvas.delete(self.rounded_rect_id)
+        
+        # Dibujar rectángulo redondeado más grande
+        self.rounded_rect_id = self.create_rounded_rectangle(
+            self.canvas, 0, 0, width, height, radius=26, fill=self.bg_color, outline=""
+        )
+        
+        # Centrar el frame dentro del canvas
+        self.canvas.coords(self.canvas_window, width//2, height//2)
     
     def load_config(self):
         if CONFIG_FILE.exists():
@@ -403,10 +463,8 @@ class Pomodoro:
     def toggle_bg_transparency(self, enabled):
         """Alternar entre fondo transparente y opaco"""
         if enabled:
-            self.root.wm_attributes("-transparent", True)
             bg_color = "systemTransparent"
         else:
-            self.root.wm_attributes("-transparent", False)
             bg_color = "#2d2d2d"
         
         self.bg_color = bg_color
@@ -425,6 +483,9 @@ class Pomodoro:
                                 pass
                 except:
                     pass
+        
+        # Redibujar el fondo con bordes redondeados
+        self.draw_rounded_bg()
 
     def tick(self):
         if self.paused:
