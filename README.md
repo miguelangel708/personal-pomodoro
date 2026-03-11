@@ -1,170 +1,127 @@
-# 🍅 Pomodoro Automático - Guía de Instalación
+# 🍅 Pomodoro Timer - Widget Moderno para macOS
 
-## 📦 Archivos del Proyecto
+Temporizador Pomodoro con diseño moderno estilo Dynamic Island de macOS, construido con CustomTkinter.
 
-```
-personal-pomodoro/
-├── pomodoro_final.py          # Script principal ✅
-├── setup.py                    # Configuración para py2app ✅
-├── pomodoro_config.example.json  # Ejemplo de configuración ✅
-├── README.md                   # Esta guía ✅
-├── .gitignore                  # Archivos ignorados por Git ✅
-├── assets/                     # Recursos de la aplicación
-│   ├── icon.png               # Icono original
-│   ├── icono2.png             # Icono alternativo
-│   └── AppIcon.icns           # Icono en formato macOS
-└── backup/                     # Versiones antiguas (no en Git)
-```
+## ✨ Características
 
-### Archivos de datos del usuario (se crean automáticamente):
-Los datos se guardan en tu directorio home, **no** dentro de la aplicación:
+✅ **Diseño Moderno**: Interfaz estilo Widget de macOS con bordes redondeados y efectos sutiles  
+✅ **Detección Automática**: Pausa automática por inactividad  
+✅ **Sistema de Descansos**: Acumula tiempo de descanso por cada pomodoro completado  
+✅ **Tracking de Tareas**: Registra tiempo dedicado a cada tarea con animaciones fluidas  
+✅ **Estadísticas Visuales**: Gráficas de productividad general y por tarea  
+✅ **Personalización**: 6 temas de color, transparencia ajustable, posición configurable  
+✅ **Notificaciones**: Alertas nativas de macOS  
+✅ **Persistencia**: Datos guardados en `~/.pomodoro/`  
 
-```
-~/.pomodoro/
-├── pomodoro_config.json       # Configuración personalizada
-└── pomodoro_data.csv          # Datos de estadísticas y tareas
-```
-
-**Contenido de `pomodoro_data.csv`:**
-- **[STATS]**: Estadísticas diarias (tiempo activo, pomodoros, descanso)
-- **[TASKS]**: Tareas actuales con tiempo acumulado
-- **[TASK_HISTORY]**: Historial diario de tiempo por tarea
-
-> **Nota**: Estos archivos contienen tus datos personales y NO se suben a Git (están en `.gitignore`). Se comparten entre la versión de desarrollo (.py) y la aplicación compilada (.app).
-
-## 🚀 Instalación en un Mac Nuevo
+## 📦 Instalación
 
 ### Opción 1: Usar la aplicación compilada (Recomendado)
 
-1. **Descargar la aplicación**:
-   - Descarga `Pomodoro Timer.app` del repositorio
-   - Arrastra la app a tu carpeta `Aplicaciones` o donde prefieras
-
-2. **Abrir por primera vez**:
-   - Haz doble clic en la aplicación
-   - Si macOS bloquea la app: `Sistema > Privacidad y Seguridad > Abrir de todos modos`
-   - Los archivos de datos se crearán automáticamente en `~/.pomodoro/`
+1. **Descargar**: Descarga `PomodoroTimer.app` de [Releases](https://github.com/miguelangel708/personal-pomodoro/releases)
+2. **Instalar**: Arrastra la app a tu carpeta `Aplicaciones`
+3. **Abrir**: Doble click en la aplicación
+   - Si macOS bloquea: `Sistema > Privacidad y Seguridad > Abrir de todos modos`
 
 ### Opción 2: Ejecutar desde código fuente
 
-### Paso 1: Clonar el repositorio
-
 ```bash
+# Clonar repositorio
 git clone https://github.com/miguelangel708/personal-pomodoro.git
 cd personal-pomodoro
-```
 
-### Paso 2: Instalar Homebrew (si no está instalado)
-
-```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-```
-
-### Paso 3: Instalar Python con Tkinter
-
-```bash
+# Instalar Python con Tkinter
 brew install python-tk@3.11
+
+# Crear entorno virtual
+/opt/homebrew/bin/python3.11 -m venv ~/pomodoro_env
+
+# Instalar dependencias
+~/pomodoro_env/bin/pip install customtkinter matplotlib
+
+# Ejecutar
+~/pomodoro_env/bin/python3 pomodoro_modern.py
 ```
 
-### Paso 4: Crear entorno virtual
+## 🎨 Personalización
 
-```bash
-/opt/homebrew/bin/python3.11 -m venv venv
-```
+### Temas de Color
+Abre configuración (⚙️) y elige entre 6 temas:
+- **Deep Black**: Negro puro estilo Dynamic Island (#000000)
+- **Material Dark**: Gris oscuro de Apple (#161617)
+- **Negro**: Gris muy oscuro (#1c1c1e)
+- **Gris Oscuro**: Gris medio (#2c2c2e)
+- **Azul Oscuro**: Tono azulado (#1a1a2e)
+- **Rojo Oscuro**: Tono rojizo (#1e1a1a)
 
-### Paso 5: Ejecutar la aplicación
+### Transparencia
+- **Transparencia de Ventana**: Ajusta la opacidad general (0.5 - 1.0)
+- **Fondo Transparente**: Switch para ocultar el fondo y ver solo los componentes flotando
 
-```bash
-# Modo desarrollo (ver en terminal)
-./venv/bin/python3 pomodoro_final.py
+### Posición
+- Click en **📍 Ajustar Posición** para arrastrar el contador
+- La posición se guarda automáticamente
 
-# Modo segundo plano
-nohup ./venv/bin/python3 pomodoro_final.py > /dev/null 2>&1 &
-```
-
-> **Nota**: Tanto la app compilada como el script .py usan los mismos archivos de datos en `~/.pomodoro/`
-
-## ⚙️ Configuración
-
-Al abrir la aplicación, haz clic en el botón **⚙** para configurar:
-
-- **Duración Pomodoro**: Tiempo de trabajo (minutos)
-- **Duración Descanso**: Tiempo que se acumula por cada pomodoro
-- **Meta Diaria**: Cantidad de pomodoros objetivo
-- **Tiempo Inactividad**: Segundos sin actividad para pausar automáticamente
-- **Transparencia**: Nivel de transparencia del contador (0.3 - 1.0)
-
-## 🎯 Cómo Usar
+## 🎯 Uso
 
 ### Contador Principal
-1. **Inicio automático**: El contador comienza cuando detecta actividad
-2. **Completar pomodoro**: Cada 25 min (configurable) se suma tiempo de descanso
-3. **Activar descanso**: Presiona **☕** para consumir tiempo acumulado
-4. **Reanudar trabajo**: Presiona **▶** cuando el descanso termine
+- **Inicio automático**: Detecta actividad del teclado/mouse
+- **Pausa automática**: Se pausa tras el tiempo de inactividad configurado
+- **Completar pomodoro**: Cada 25 min acumula tiempo de descanso
+- **Activar descanso**: Click en **●** (botón naranja)
 
 ### Sistema de Tareas
-1. **Expandir panel**: Presiona **▼ Tareas** debajo del contador
-2. **Agregar tarea**: Click en **+ Nueva** y escribe el nombre
-3. **Seleccionar tarea**: Click en el círculo (○) para activarla (●)
-4. **Tracking automático**: El tiempo se registra en la tarea seleccionada
-5. **Eliminar tarea**: Click en **−** al lado de cada tarea
-6. **Reset diario**: Click en **↻ Reset** para eliminar todas las tareas
+1. Click en **⌄** para expandir el panel
+2. **+ Nueva**: Agregar tarea
+3. **○**: Seleccionar tarea activa
+4. **×**: Eliminar tarea
+5. **↻ Reset**: Limpiar todas las tareas
 
 ### Estadísticas
-1. **Ver gráficas**: Presiona **📊** para abrir estadísticas
-2. **Productividad General**: Horas trabajadas y pomodoros por día
-3. **Tiempo por Tarea**: Distribución de tiempo en los últimos 7 días
+Click en **◐** para ver:
+- Productividad general (horas y pomodoros por día)
+- Tiempo por tarea (últimos 7 días)
 
 ## 📊 Archivos de Datos
 
-Todos los datos se guardan en `~/.pomodoro/` (directorio oculto en tu home):
+Los datos se guardan en `~/.pomodoro/`:
 
-### `pomodoro_config.json` (se crea automáticamente)
-Configuración personalizada:
-```json
-{
-  "pomodoro_minutes": 25,
-  "break_minutes": 5,
-  "daily_goal": 8,
-  "idle_threshold": 60,
-  "transparency": 0.9,
-  "window_x": 1720,
-  "window_y": 40
-}
+```
+~/.pomodoro/
+├── pomodoro_config.json    # Configuración personalizada
+└── pomodoro_data.csv        # Estadísticas y tareas
 ```
 
-### `pomodoro_data.csv` (se crea automáticamente)
-Archivo unificado con 3 secciones:
+### Formato de `pomodoro_data.csv`
 
 **[STATS]** - Estadísticas diarias:
 ```csv
-2026-03-10,7200,4,900
+2026-03-11,7200,4,900
 ```
 (Fecha, Segundos_Activos, Pomodoros, Descanso_Acumulado)
 
 **[TASKS]** - Tareas actuales:
 ```csv
 Desarrollo Frontend,3600
-Reuniones,1800
 ```
 (Nombre_Tarea, Segundos_Dedicados)
 
 **[TASK_HISTORY]** - Historial diario:
 ```csv
-[DATE:2026-03-10]
+[DATE:2026-03-11]
 Desarrollo Frontend,3600
-Reuniones,1800
 ```
 
-> **Ubicación**: `~/.pomodoro/` es compartida entre el script .py y la app compilada
-
-## 🛑 Detener la Aplicación
+## 🔧 Compilar la Aplicación
 
 ```bash
-# Si está en primer plano: Ctrl+C
+# Activar entorno virtual
+source ~/pomodoro_env/bin/activate
 
-# Si está en segundo plano:
-pkill -f pomodoro_final.py
+# Compilar con py2app
+cd /Users/miguelangelmunoz/Desktop/kiro-labs
+./create_app.sh
+
+# La app se genera en: ./PomodoroTimer.app
 ```
 
 ## 🔄 Actualizar en Otro Mac
@@ -174,76 +131,43 @@ cd personal-pomodoro
 git pull origin main
 ```
 
-Los archivos de configuración y datos se crearán automáticamente en `~/.pomodoro/` en el nuevo Mac.
-
-Si usas la app compilada, simplemente copia `Pomodoro Timer.app` al nuevo Mac.
-
-## ⚡ Inicio Automático (Opcional)
-
-Para que se ejecute al iniciar sesión, crea un LaunchAgent:
-
-```bash
-cat > ~/Library/LaunchAgents/com.pomodoro.plist << 'EOF'
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-    <key>Label</key>
-    <string>com.pomodoro</string>
-    <key>ProgramArguments</key>
-    <array>
-        <string>/Users/TU_USUARIO/personal-pomodoro/venv/bin/python3</string>
-        <string>/Users/TU_USUARIO/personal-pomodoro/pomodoro_final.py</string>
-    </array>
-    <key>RunAtLoad</key>
-    <true/>
-    <key>KeepAlive</key>
-    <true/>
-</dict>
-</plist>
-EOF
-
-# Cargar el servicio
-launchctl load ~/Library/LaunchAgents/com.pomodoro.plist
-```
-
-**Nota**: Reemplaza `TU_USUARIO` con tu nombre de usuario real.
+Los archivos de configuración se crean automáticamente en `~/.pomodoro/` en el nuevo Mac.
 
 ## 🐛 Solución de Problemas
 
 ### La ventana no muestra texto
-- Asegúrate de usar Python de Homebrew, no el del sistema
+- Usa Python de Homebrew: `/opt/homebrew/bin/python3.11`
 - Verifica: `which python3` debe mostrar `/opt/homebrew/bin/python3.11`
 
 ### El contador no avanza
-- Revisa la configuración de "Tiempo Inactividad"
+- Revisa "Tiempo Inactividad" en configuración
 - Verifica que estés usando activamente el teclado/mouse
 
-### No se guardan las estadísticas
-- Verifica permisos de escritura en la carpeta del proyecto
-- Revisa que `pomodoro_data.csv` exista y sea editable
-
-### Archivos no se crean automáticamente
+### Archivos no se crean
 - Ejecuta la aplicación al menos una vez
-- Los archivos se crean en `~/.pomodoro/` (no en el directorio del proyecto)
-- Verifica con: `ls -la ~/.pomodoro/`
+- Verifica: `ls -la ~/.pomodoro/`
 
-## 📝 Características
+### Animaciones lentas
+- Aumenta la transparencia de ventana a 1.0
+- Cierra otras aplicaciones pesadas
 
-✅ Detección automática de actividad (macOS nativo)  
-✅ Pausa automática por inactividad  
-✅ Sistema de descansos acumulados  
-✅ Tracking de tiempo por tarea  
-✅ Historial diario de tareas  
-✅ Persistencia de datos por día  
-✅ Notificaciones nativas de macOS  
-✅ Gráficas de productividad general y por tarea  
-✅ 100% portable (sin dependencias externas)  
-✅ Transparencia configurable  
+## 🎨 Paleta de Colores (Sistema Apple)
+
+- **Verde**: `#34C759` (trabajo activo)
+- **Naranja**: `#FF9F0A` (descanso)
+- **Rojo**: `#FF3B30` (pausado/eliminar)
+- **Azul**: `#007AFF` (acciones principales)
+- **Gris**: `#A1A1A6` (texto secundario)
+
+## 📝 Tecnologías
+
+- **Python 3.11+** con Tkinter
+- **CustomTkinter 5.2+** para interfaz moderna
+- **Matplotlib 3.10+** para gráficas
+- **py2app** para compilación en macOS
 
 ---
 
-**Versión**: 2.0  
+**Versión**: 3.0 (CustomTkinter)  
 **Compatibilidad**: macOS 11+  
-**Requisitos**: Python 3.11+ con Tkinter  
 **Repositorio**: https://github.com/miguelangel708/personal-pomodoro
