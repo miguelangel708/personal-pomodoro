@@ -15,28 +15,31 @@ Temporizador Pomodoro con diseño moderno estilo Dynamic Island de macOS, constr
 
 ## 📦 Instalación
 
-### Opción 1: Usar la aplicación compilada (Recomendado)
+### Opción 1: Usar la aplicación compilada (Recomendado para usuarios)
 
-1. **Descargar**: Descarga `PomodoroTimer.app` de [Releases](https://github.com/miguelangel708/personal-pomodoro/releases)
-2. **Instalar**: Arrastra la app a tu carpeta `Aplicaciones`
-3. **Abrir**: Doble click en la aplicación
+1. **Descargar**: Descarga `PomodoroTimer-v3.0.zip` de [Releases](https://github.com/miguelangel708/personal-pomodoro/releases)
+2. **Descomprimir**: Extrae el archivo ZIP
+3. **Instalar**: Arrastra `Pomodoro Timer.app` a tu carpeta `Aplicaciones`
+4. **Abrir**: Doble click en la aplicación
    - Si macOS bloquea: `Sistema > Privacidad y Seguridad > Abrir de todos modos`
 
-### Opción 2: Ejecutar desde código fuente
+> ✅ **No requiere instalar Python ni dependencias**
+
+### Opción 2: Ejecutar desde código fuente (Para desarrolladores en macOS)
 
 ```bash
 # Clonar repositorio
 git clone https://github.com/miguelangel708/personal-pomodoro.git
 cd personal-pomodoro
 
-# Instalar Python con Tkinter
+# Instalar Python con Tkinter (macOS)
 brew install python-tk@3.11
 
 # Crear entorno virtual
 /opt/homebrew/bin/python3.11 -m venv ~/pomodoro_env
 
 # Instalar dependencias
-~/pomodoro_env/bin/pip install customtkinter matplotlib
+~/pomodoro_env/bin/pip install -r requirements.txt
 
 # Ejecutar
 ~/pomodoro_env/bin/python3 pomodoro_modern.py
