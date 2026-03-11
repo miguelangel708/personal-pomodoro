@@ -23,7 +23,7 @@ brew install python-tk@3.11
 /opt/homebrew/bin/python3.11 -m venv ~/pomodoro_env
 
 # 4. Instalar dependencias
-~/pomodoro_env/bin/pip install customtkinter matplotlib
+~/pomodoro_env/bin/pip install -r requirements.txt
 
 # 5. Ejecutar
 ~/pomodoro_env/bin/python3 pomodoro_modern.py
@@ -82,7 +82,7 @@ open PomodoroTimer.app
 
 ### "No module named 'customtkinter'"
 ```bash
-~/pomodoro_env/bin/pip install customtkinter matplotlib
+~/pomodoro_env/bin/pip install -r requirements.txt
 ```
 
 ### "La ventana no muestra texto"
