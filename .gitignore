@@ -8,11 +8,17 @@ venv/
 env/
 ENV/
 
-# Datos del usuario (no compartir)
+# Datos del usuario (ahora en ~/.pomodoro/)
 pomodoro_data.csv
 pomodoro_config.json
 
+# py2app build
+build/
+dist/
+*.egg-info/
+
 # Archivos de desarrollo/backup
+backup/
 pomodoro_final_backup.py
 pomodoro_final_pre_rounded.py
 pomodoro_final_stable*.py
@@ -26,6 +32,7 @@ pomodoro_tasks.csv
 .DS_Store
 .AppleDouble
 .LSOverride
+*.app
 
 # IDEs
 .vscode/

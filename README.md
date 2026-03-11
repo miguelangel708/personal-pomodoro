@@ -5,22 +5,47 @@
 ```
 personal-pomodoro/
 ├── pomodoro_final.py          # Script principal ✅
+├── setup.py                    # Configuración para py2app ✅
 ├── pomodoro_config.example.json  # Ejemplo de configuración ✅
 ├── README.md                   # Esta guía ✅
 ├── .gitignore                  # Archivos ignorados por Git ✅
+├── assets/                     # Recursos de la aplicación
+│   ├── icon.png               # Icono original
+│   ├── icono2.png             # Icono alternativo
+│   └── AppIcon.icns           # Icono en formato macOS
 └── backup/                     # Versiones antiguas (no en Git)
 ```
 
-### Archivos que se crean automáticamente:
-- **`pomodoro_config.json`** - Se crea al primer uso con valores por defecto
-- **`pomodoro_data.csv`** - Se crea automáticamente para guardar:
-  - Estadísticas diarias (tiempo activo, pomodoros, descanso)
-  - Tareas actuales con tiempo acumulado
-  - Historial diario de tiempo por tarea
+### Archivos de datos del usuario (se crean automáticamente):
+Los datos se guardan en tu directorio home, **no** dentro de la aplicación:
 
-> **Nota**: Estos archivos contienen tus datos personales y NO se suben a Git (están en `.gitignore`)
+```
+~/.pomodoro/
+├── pomodoro_config.json       # Configuración personalizada
+└── pomodoro_data.csv          # Datos de estadísticas y tareas
+```
+
+**Contenido de `pomodoro_data.csv`:**
+- **[STATS]**: Estadísticas diarias (tiempo activo, pomodoros, descanso)
+- **[TASKS]**: Tareas actuales con tiempo acumulado
+- **[TASK_HISTORY]**: Historial diario de tiempo por tarea
+
+> **Nota**: Estos archivos contienen tus datos personales y NO se suben a Git (están en `.gitignore`). Se comparten entre la versión de desarrollo (.py) y la aplicación compilada (.app).
 
 ## 🚀 Instalación en un Mac Nuevo
+
+### Opción 1: Usar la aplicación compilada (Recomendado)
+
+1. **Descargar la aplicación**:
+   - Descarga `Pomodoro Timer.app` del repositorio
+   - Arrastra la app a tu carpeta `Aplicaciones` o donde prefieras
+
+2. **Abrir por primera vez**:
+   - Haz doble clic en la aplicación
+   - Si macOS bloquea la app: `Sistema > Privacidad y Seguridad > Abrir de todos modos`
+   - Los archivos de datos se crearán automáticamente en `~/.pomodoro/`
+
+### Opción 2: Ejecutar desde código fuente
 
 ### Paso 1: Clonar el repositorio
 
@@ -57,6 +82,8 @@ brew install python-tk@3.11
 nohup ./venv/bin/python3 pomodoro_final.py > /dev/null 2>&1 &
 ```
 
+> **Nota**: Tanto la app compilada como el script .py usan los mismos archivos de datos en `~/.pomodoro/`
+
 ## ⚙️ Configuración
 
 Al abrir la aplicación, haz clic en el botón **⚙** para configurar:
@@ -90,6 +117,8 @@ Al abrir la aplicación, haz clic en el botón **⚙** para configurar:
 
 ## 📊 Archivos de Datos
 
+Todos los datos se guardan en `~/.pomodoro/` (directorio oculto en tu home):
+
 ### `pomodoro_config.json` (se crea automáticamente)
 Configuración personalizada:
 ```json
@@ -98,7 +127,9 @@ Configuración personalizada:
   "break_minutes": 5,
   "daily_goal": 8,
   "idle_threshold": 60,
-  "transparency": 0.9
+  "transparency": 0.9,
+  "window_x": 1720,
+  "window_y": 40
 }
 ```
 
@@ -125,6 +156,8 @@ Desarrollo Frontend,3600
 Reuniones,1800
 ```
 
+> **Ubicación**: `~/.pomodoro/` es compartida entre el script .py y la app compilada
+
 ## 🛑 Detener la Aplicación
 
 ```bash
@@ -141,7 +174,9 @@ cd personal-pomodoro
 git pull origin main
 ```
 
-Los archivos `pomodoro_config.json` y `pomodoro_data.csv` se crearán automáticamente en el nuevo Mac.
+Los archivos de configuración y datos se crearán automáticamente en `~/.pomodoro/` en el nuevo Mac.
+
+Si usas la app compilada, simplemente copia `Pomodoro Timer.app` al nuevo Mac.
 
 ## ⚡ Inicio Automático (Opcional)
 
@@ -190,7 +225,8 @@ launchctl load ~/Library/LaunchAgents/com.pomodoro.plist
 
 ### Archivos no se crean automáticamente
 - Ejecuta la aplicación al menos una vez
-- Los archivos se crean en el mismo directorio que `pomodoro_final.py`
+- Los archivos se crean en `~/.pomodoro/` (no en el directorio del proyecto)
+- Verifica con: `ls -la ~/.pomodoro/`
 
 ## 📝 Características
 

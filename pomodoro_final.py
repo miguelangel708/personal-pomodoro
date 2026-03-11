@@ -7,10 +7,11 @@ import json
 from pathlib import Path
 from datetime import datetime
 
-# Usar directorio del script para archivos
-SCRIPT_DIR = Path(__file__).parent
-CONFIG_FILE = SCRIPT_DIR / "pomodoro_config.json"
-DATA_FILE = SCRIPT_DIR / "pomodoro_data.csv"  # Archivo único para todos los datos
+# Usar directorio home del usuario para archivos
+DATA_DIR = Path.home() / ".pomodoro"
+DATA_DIR.mkdir(exist_ok=True)
+CONFIG_FILE = DATA_DIR / "pomodoro_config.json"
+DATA_FILE = DATA_DIR / "pomodoro_data.csv"
 
 DEFAULT_CONFIG = {
     "pomodoro_minutes": 0.5,
@@ -29,9 +30,16 @@ class Pomodoro:
         self.root.attributes("-topmost", True)
         self.root.attributes("-alpha", self.config.get("transparency", 0.9))
         
-        # Posicionar a la derecha debajo de la barra de menú
-        screen_width = self.root.winfo_screenwidth()
-        self.root.wm_geometry(f"+{screen_width - 200}+40")
+        # Posicionar usando posición guardada o por defecto
+        if "window_x" in self.config and "window_y" in self.config:
+            x_pos = self.config["window_x"]
+            y_pos = self.config["window_y"]
+        else:
+            screen_width = self.root.winfo_screenwidth()
+            x_pos = screen_width - 200
+            y_pos = 40
+        
+        self.root.wm_geometry(f"+{x_pos}+{y_pos}")
         
         # Hacer que aparezca en todos los escritorios/Spaces de macOS
         try:
@@ -156,6 +164,9 @@ class Pomodoro:
         self.tasks = []
         self.selected_task = None
         self.tasks_expanded = False
+        self.drag_mode = False
+        self.drag_start_x = 0
+        self.drag_start_y = 0
         self.load_stats()
         self.load_tasks()
         
@@ -171,6 +182,35 @@ class Pomodoro:
     def save_config(self):
         with open(CONFIG_FILE, "w") as f:
             json.dump(self.config, f, indent=2)
+    
+    def enable_drag_mode(self):
+        self.drag_mode = True
+        self.root.config(cursor="fleur")
+        
+        def start_drag(event):
+            self.drag_start_x = event.x
+            self.drag_start_y = event.y
+        
+        def do_drag(event):
+            x = self.root.winfo_x() + (event.x - self.drag_start_x)
+            y = self.root.winfo_y() + (event.y - self.drag_start_y)
+            self.root.geometry(f"+{x}+{y}")
+        
+        def stop_drag(event):
+            self.drag_mode = False
+            self.root.config(cursor="")
+            # Guardar posición
+            self.config["window_x"] = self.root.winfo_x()
+            self.config["window_y"] = self.root.winfo_y()
+            self.save_config()
+            self.root.unbind("<Button-1>")
+            self.root.unbind("<B1-Motion>")
+            self.root.unbind("<ButtonRelease-1>")
+        
+        self.root.bind("<Button-1>", start_drag)
+        self.root.bind("<B1-Motion>", do_drag)
+        self.root.bind("<ButtonRelease-1>", stop_drag)
+    
     def resume_work(self):
         self.paused = False
         self.on_break = False
@@ -327,6 +367,9 @@ class Pomodoro:
             command=lambda v: self.root.attributes("-alpha", float(v))
         )
         transparency_scale.pack(padx=10, fill="x")
+        
+        # Botón para ajustar posición
+        tk.Button(settings, text="📍 Ajustar Posición", command=self.enable_drag_mode, bg="#ffaa00").pack(pady=5)
         
         def save():
             self.config["pomodoro_minutes"] = pomodoro_var.get()
