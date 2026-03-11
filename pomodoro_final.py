@@ -18,7 +18,8 @@ DEFAULT_CONFIG = {
     "break_minutes": 0.2,
     "daily_goal": 8,
     "idle_threshold": 60,
-    "transparency": 0.9
+    "transparency": 0.9,
+    "transparent_bg": False
 }
 
 class Pomodoro:
@@ -29,6 +30,13 @@ class Pomodoro:
         self.root.overrideredirect(True)
         self.root.attributes("-topmost", True)
         self.root.attributes("-alpha", self.config.get("transparency", 0.9))
+        
+        # Configurar transparencia del fondo
+        if self.config.get("transparent_bg", False):
+            self.root.wm_attributes("-transparent", True)
+            self.bg_color = "systemTransparent"
+        else:
+            self.bg_color = "#2d2d2d"
         
         # Posicionar usando posición guardada o por defecto
         if "window_x" in self.config and "window_y" in self.config:
@@ -50,18 +58,18 @@ class Pomodoro:
         except:
             pass
         
-        frame = tk.Frame(self.root, bg="#2d2d2d")
-        frame.pack(fill=tk.BOTH, expand=True)
+        self.main_frame = tk.Frame(self.root, bg=self.bg_color)
+        self.main_frame.pack(fill=tk.BOTH, expand=True)
         
         # Columna izquierda: tiempos
-        left_frame = tk.Frame(frame, bg="#2d2d2d")
+        left_frame = tk.Frame(self.main_frame, bg=self.bg_color)
         left_frame.pack(side=tk.LEFT, padx=5, pady=5)
         
         self.label = tk.Label(
             left_frame,
             text="00:00 | P:0/8",
             font=("Menlo", 12),
-            bg="#2d2d2d",
+            bg=self.bg_color,
             fg="#00ff00",
             padx=4,
             pady=4
@@ -72,7 +80,7 @@ class Pomodoro:
             left_frame,
             text="Descanso: 00:00",
             font=("Menlo", 10),
-            bg="#2d2d2d",
+            bg=self.bg_color,
             fg="#ffaa00",
             padx=4,
             pady=2
@@ -84,7 +92,7 @@ class Pomodoro:
             left_frame,
             text="▼ Tareas",
             font=("Menlo", 9),
-            bg="#2d2d2d",
+            bg=self.bg_color,
             fg="#888888",
             bd=0,
             command=self.toggle_tasks_panel,
@@ -93,7 +101,7 @@ class Pomodoro:
         self.tasks_toggle_btn.pack(pady=(5, 0))
         
         # Columna derecha: botones verticales
-        btn_container = tk.Frame(frame, bg="#2d2d2d")
+        btn_container = tk.Frame(self.main_frame, bg=self.bg_color)
         btn_container.pack(side=tk.RIGHT, padx=5, pady=5)
         
         stats_btn = tk.Button(
@@ -336,7 +344,7 @@ class Pomodoro:
     def open_settings(self):
         settings = tk.Toplevel(self.root)
         settings.title("⚙ Configuración")
-        settings.geometry("300x300")
+        settings.geometry("300x350")
         settings.attributes("-topmost", True)
         
         tk.Label(settings, text="Duración Pomodoro (min):", anchor="w").pack(fill="x", padx=10, pady=(10,0))
@@ -355,7 +363,7 @@ class Pomodoro:
         idle_var = tk.IntVar(value=self.config["idle_threshold"])
         tk.Spinbox(settings, from_=10, to=300, textvariable=idle_var, width=10).pack(padx=10)
         
-        tk.Label(settings, text="Transparencia:", anchor="w").pack(fill="x", padx=10, pady=(10,0))
+        tk.Label(settings, text="Transparencia Ventana:", anchor="w").pack(fill="x", padx=10, pady=(10,0))
         transparency_var = tk.DoubleVar(value=self.config.get("transparency", 0.9))
         transparency_scale = tk.Scale(
             settings,
@@ -368,6 +376,15 @@ class Pomodoro:
         )
         transparency_scale.pack(padx=10, fill="x")
         
+        tk.Label(settings, text="Fondo Transparente:", anchor="w").pack(fill="x", padx=10, pady=(10,0))
+        transparent_bg_var = tk.BooleanVar(value=self.config.get("transparent_bg", False))
+        tk.Checkbutton(
+            settings,
+            text="Activar fondo transparente",
+            variable=transparent_bg_var,
+            command=lambda: self.toggle_bg_transparency(transparent_bg_var.get())
+        ).pack(padx=10, anchor="w")
+        
         # Botón para ajustar posición
         tk.Button(settings, text="📍 Ajustar Posición", command=self.enable_drag_mode, bg="#ffaa00").pack(pady=5)
         
@@ -377,10 +394,37 @@ class Pomodoro:
             self.config["daily_goal"] = goal_var.get()
             self.config["idle_threshold"] = idle_var.get()
             self.config["transparency"] = transparency_var.get()
+            self.config["transparent_bg"] = transparent_bg_var.get()
             self.save_config()
             settings.destroy()
         
         tk.Button(settings, text="Guardar", command=save, bg="#00ff00").pack(pady=15)
+    
+    def toggle_bg_transparency(self, enabled):
+        """Alternar entre fondo transparente y opaco"""
+        if enabled:
+            self.root.wm_attributes("-transparent", True)
+            bg_color = "systemTransparent"
+        else:
+            self.root.wm_attributes("-transparent", False)
+            bg_color = "#2d2d2d"
+        
+        self.bg_color = bg_color
+        
+        # Actualizar todos los widgets con fondo
+        self.main_frame.config(bg=bg_color)
+        for widget in self.main_frame.winfo_children():
+            if isinstance(widget, (tk.Frame, tk.Label, tk.Button)):
+                try:
+                    widget.config(bg=bg_color)
+                    for child in widget.winfo_children():
+                        if isinstance(child, (tk.Frame, tk.Label, tk.Button)):
+                            try:
+                                child.config(bg=bg_color)
+                            except:
+                                pass
+                except:
+                    pass
 
     def tick(self):
         if self.paused:
